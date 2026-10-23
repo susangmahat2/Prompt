@@ -1,23 +1,51 @@
 from groq import generate_response
 
-def prompt_engineering_activity():
-    print("Welcome to thr AI Prompt Engineering Tutorial!")
+def run_activity():
+    print("ZERO-SHOT, ONE-SHOT & FEW=SHOT LEARNING ACYIVITY")
+    category=input("Enter a category (e.g., animal, food, city):").strip()
+    item= input(f"Enter a specific{category}to classify: ").strip()
 
-    vague =input("Enter a vague prompt: ")
-    print("\nAI's response to vague prompt:")
-    print(generate_response(vague))
+    if not category or not item:
+        print("Please fill in both fields to run the activity.")
+        return
+    zero_shot=f"Is {item} a {category}? Answer yes or no."
+    print("\n--- ZERO-SHOT LEARNING---")
+    print(f"Response: {generate_response(zero_shot, temperature=0.3, max_tokens=1024)}")
 
-    specific = input("\nNow, make it more specific: ")
-    print(generate_response(specific))
+    one_shot=f"""Example:
+category:fruit
+Item:apple
+Answer: Yes, apple is a fruit.
 
-    context=input("\nNow, add context to your specific prompt: ")
-    print("\nAI's response to contextual prompt:")
-    print(generate_response(context))
+Now you try:
+Category:{category}
+Item:{item}
+Answer:"""
+    print("\n---ONE-SHOT LEARNING---")
+    print(f"Response: {generate_response(one_shot, temperature=0.3, max_tokens=1024)}")
 
-    print("\n----REflection----")
-    print("1. How did the AI's resonse change when the prompt was made more specific?")
-    print("2. How did the AI's response improve with the added context?")
-    print("3. Which prompt produce the most elevent and tailoed response? Why?")
+    few_shot=f"""Example1:
+Category:fruit
+Item:Apple
+ANswer:Yes, apple is a fruit.
 
-if __name__ =="__main__":
-    prompt_engineering_activity()
+now Try:
+Category:{category}
+Item:{item}
+Answer:"""
+    print("\n----FEW-SHOT LEARNING---")
+    print(f"Response:{generate_response(few_shot, temperature=0.3,max_tokens=1024)}")
+
+    creative_prompt = f"""Write a one sentence story about the given words.
+Example1:Word:moon
+Story:The moon lit up the night sky as a little astrounaut began an exciting space adventure.
+Word:{item}
+Story:"""
+    print("\n--- Creative FEW-SHOT EXAMPLE---")
+    print(f"Response:{generate_response(creative_prompt, temperature=0.7, max_tokens=1024)}")
+    print("\n--- REFLECTION QUESTIONS----")
+    print("1. How did the response differ between zero-shot, one-shot, and few-shot")
+    print("2.WHich approach gave the most helpful response?")
+
+if __name__=="__main__":
+    run_activity()
