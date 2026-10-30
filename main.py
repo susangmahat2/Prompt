@@ -1,64 +1,74 @@
-from groq import generate_response
+from hf import generate_response
 
-def reinforcement_learning_activity():
-    print("\n=== REINFORCEMENT LEARNING ACTIVITY===\n")
-    prompt=input("Enter a prompt for the AI model(e.g., 'describe the lion'):").strip()
-    if not prompt:
-        print("Please enter a prompt to run the activity")
-        return
-
-    initial_response = generate_response(prompt, temperature=0.3, max_tokens=1024)
-    print(f"\nInitial AI response:{initial_response}")
-
+def get_essay_details():
+    print("\n=== AI writing Assisatnce===")
+    topic = input("What is the topic of your essay?").strip()
+    essay_type=input("What type of essay are you writing?").strpi()
+    lengths=["3000 Words","900 words","1200 words","2000 words"]
+    print("Select essay word count:")
+    for i, l in enumerate(lengths, 1): print(f"{i}){l}")
     try:
-        rating = int(input("RAte the response fro 1(bad)to 5(good):").strip())
-        if rating<1 or rating>5:
-            print("Invlid rating. USing3")
-            rating=3
+        idx=int(input(">").strip())
+        length = lengths[idx-1] if 1<= idx <= len(lengths)else "300 words" 
     except ValueError:
-        print("Invlid rating. Using 3")
-        rating=3
+        length ="300 words"
+    target_audience= input("Target audiance (e.g., High school students):").strip()
+    return{"topic":topic, "essay_type": essay_type, "length": length, "target_audience": target_audience}
+def generate_essay_content(details):
+    try:
+        temp=float(input("Enter temperature (0.1 structured, 0.7 creative):").strip())
+        if not (0.0 <= temp <=1.0): raise ValueError
+    except ValueError:
+        print("Invalid Temeprature. Using 0.3.")
+        temp=0.3
+    intro_p =f"Write an introduction for an {details['essay_type']}essay about {details['topic']}on the topic of {details['length']}"
+    intro= generate_response(intro_p,temperature=temp, max_tokens=1024)
+    print("\n=== Generated Instrodeuction===")
+    print(intro)
 
-    feedback=input("PRovide feedback for improvement:").strip()
-    improved_response =f"{initial_response} (Improved with your feedback: {feedback})"
-    print(f"\nImproved AI Response: {improved_response}")
+    print("\n WOuld you like the body wrriten as a full draft or step-by-step?")
+    print("1)FUll draft\n2)  Step-by-step")
+    choice = input(">").strip
 
-    print("\nREflrction:")
-    print("1. How did the model response improve with feedback")
-    print("2. How does reinforcement leaning help in AI to improve its performance over time?")
+    
+    if choice == "1":
+        body_p = f"Write a full body for an essay on {details['topic']} with the stance of {details['target_audience']}."
+        body = generate_response(body_p, temperature=temp, max_tokens=1024)
+        print("\n=== Generated Full Body ===\n")
+        print(body)
+    else:
+        step_p = f"Write step-by-step arguments for an essay on {details['topic']}. Provide evidence and reasoning."
+        body_step = generate_response(step_p, temperature=temp, max_tokens=1024)
+        print("\n=== Generated Step-by-Step Body ===\n")
+        print(body_step)
 
-def role_based_prompt_activity():
-    print("\n=== ROLE-BASED PROMPT ACTIVITY===\n")
-    category = input("Enter a category (e.g., science, history, math):").strip()
-    item = input(f"Enter a specific {category} topic (e.g, 'photosynthesis' for science):").strip()
+    concl_p = f"Write a conclusion for an {details['essay_type']} essay about {details['topic']} with the stance of {details['target_audience']}."
+    concl = generate_response(concl_p, temperature=temp, max_tokens=1024)
+    print("\n=== Generated Conclusion ===\n")
+    print(concl)
 
-    if not category or not item:
-        print("Please fill in both firlds to run the activity.")
-        return
+def feedback_and_refinement():
+    try:
+        rating = int(input("\nRate satisfaction (1-5): ").strip())
+        if rating < 1 or rating > 5: raise ValueError
+    except ValueError:
+        print("Invalid rating. Using 3.")
+        rating = 3
 
-    teacher_prompt = f"You are a teacher. Explain {item} in simple terms."
-    expert_prompt = f"You are an expert in {category}. Explain {item} in a detailed, technical manner."
-
-    teacher_response = generate_response(teacher_prompt, temperature=0.3, max_tokens=1024)
-    expert_response = generate_response(expert_prompt, temperature=0.3, max_tokens=1024)
-
-    print(f"\n---Teacher Perspective---\n{teacher_response}")
-    print(f"\n--- Expert Perspective---\n{expert_response}")
-
+    if rating != 5:
+        feedback = input("Provide feedback (tone, structure, etc.): ").strip()
+        print(f"\nThank you for your feedback: {feedback}")
+    else:
+        print("\nThank you! The essay looks good.")
 
 def run_activity():
-    print("\n ===AI Learning Activity===")
-    print("Choose an activity")
-    print("1)Reinforcemenjt Learning")
-    print("2) Role-Based Prompts")
-    choice = input(">").strip()
+    print("\nWelcome to the AI Writing Assistant!")
+    details = get_essay_details()
+    if not details["topic"] or not details["essay_type"]:
+        print("Please provide at least a topic and essay type to continue.")
+        return
+    generate_essay_content(details)
+    feedback_and_refinement()
 
-    if choice =="1":
-        reinforcement_learning_activity()
-    elif choice=="2":
-        role_based_prompt_activity()
-    else:
-        print("Invalid Choice.Please choose 1 or 2.")
-if __name__=="__main__":
+if __name__ == "__main__":
     run_activity()
-

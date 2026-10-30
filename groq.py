@@ -1,9 +1,3 @@
-
-
-
-
-
-
 # groq.py  (pip install openai)
 import config
 from openai import OpenAI
