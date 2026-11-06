@@ -32,3 +32,5 @@ def generate_response(prompt: str, temperature: float = 0.3, max_tokens: int = 5
         "2) Replace Groq model in groq.py (GROQ_MODELS).\n"
         f"Details: {type(last_err).__name__}: {last_err}"
     )
+
+
