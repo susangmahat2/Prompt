@@ -4,7 +4,7 @@ from huggingface_hub import InferenceClient
 MODELS = getattr(
     config,
     "HF_MODELS",
-    ["openai/gpt-oss-120b"],
+    ["meta-llama/Llama-3.1-8B-Instruct"],
 )
 
 def generate_response(prompt: str, temperature: float = 0.3, max_tokens: int = 512) -> str:
